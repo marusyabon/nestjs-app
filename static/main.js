@@ -1,10 +1,12 @@
-const app = new Vue({
+new Vue({
     el: '#app',
+    userId: '5e70d00493ed583528fb7ee5',
     data: {
         title: 'Nestjs Websockets Chat',
         name: '',
         text: '',
         messages: [],
+        charts: [],
         socket: null
     },
     methods: {
@@ -25,7 +27,11 @@ const app = new Vue({
             return this.name.length > 0 && this.text.length > 0
         }
     },
-    created() {
+    async created() {
+        const response = await axios.get('http://localhost:3000/charts');
+        console.log(response.data)
+        this.charts = response.data;
+
         this.socket = io('http://localhost:3000');
         this.socket.on('msgToClient', (message) => {
             this.receivedMessage(message)
