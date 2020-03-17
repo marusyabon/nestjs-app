@@ -6,8 +6,6 @@ import { User } from './user.model';
 
 @Injectable()
 export class UsersService {
-  private users: User[] = [];
-
   constructor(
     @InjectModel('User') private readonly userModel: Model<User>
   ) {}
@@ -15,20 +13,21 @@ export class UsersService {
   async insertUser(name: string, email: string, password: string) {
     const newUser = new this.userModel({name, email, password})
     const result = await newUser.save();
-    return result._id;
+    return result._id as string;
   }
 
-  getUsers() {
-    return [...this.users];
+  async getUsers() {
+    const users = await this.userModel.find().exec();
+    return users;
   }
 
-  getSingleUser(userId: string) {
+  async getUserById(userId: string) {
     const user = this.findUser(userId);
     return { ...user };
   }
 
   private findUser(id: string): User {
-    const user = this.users.find(a => a.id == id);
+    const user = this.userModel.find({_id: id});
     if (!user) {
       throw new NotFoundException('Could not find user.');
     }
