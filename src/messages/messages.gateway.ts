@@ -19,6 +19,7 @@ import {
     @SubscribeMessage('msgToServer')
     handleMessage(client: Socket, payload: string): void {
       this.server.emit('msgToClient', payload);
+      console.log(payload)
     }
   
     afterInit(server: Server) {
@@ -30,7 +31,6 @@ import {
     }
   
     handleConnection(client: Socket, ...args: any[]) {
-      client.emit('connection', )
-      this.logger.log(`Client connected: ${client.id}`);
+      this.logger.log(`Client connected: ${client}`);
     }
   }

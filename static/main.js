@@ -7,12 +7,16 @@ new Vue({
         text: '',
         messages: [],
         charts: [],
-        socket: null
+        socket: null,
+        showChart: false,
+        chartId: null
     },
     methods: {
         sendMessage() {
             if(this.validateInput()) {
+                console.log(this.chartId)
                 const message = {
+                    chartId: this.chartId,
                     name: this.name,
                     text: this.text
                 }
@@ -25,16 +29,18 @@ new Vue({
         },
         validateInput() {
             return this.name.length > 0 && this.text.length > 0
+        },
+        openChart(chartId) {
+            this.showChart = true;
+            this.chartId = chartId;
+            this.socket = io(`http://localhost:3000/messages`);
+            this.socket.on('msgToClient', (message) => {
+                this.receivedMessage(message)
+            });
         }
     },
     async created() {
         const response = await axios.get('http://localhost:3000/charts');
-        console.log(response.data)
         this.charts = response.data;
-
-        this.socket = io('http://localhost:3000/messages');
-        this.socket.on('msgToClient', (message) => {
-            this.receivedMessage(message)
-        })
     }
 })
