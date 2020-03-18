@@ -9,7 +9,7 @@ import {
   import { Logger } from '@nestjs/common';
   import { Socket, Server } from 'socket.io';
   
-  @WebSocketGateway()
+  @WebSocketGateway({namespace: 'messages'})
   export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer() 
     server: Server;
@@ -30,6 +30,7 @@ import {
     }
   
     handleConnection(client: Socket, ...args: any[]) {
+      client.emit('connection', )
       this.logger.log(`Client connected: ${client.id}`);
     }
   }

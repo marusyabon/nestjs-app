@@ -12,7 +12,7 @@ export class ChartsService {
 
   async getCharts() {
     const charts = await this.chartModel.find().exec();
-    return charts;
+    return charts as Chart[];
   }
 
   async insertChart(name: string, userIds: Array<string>) {

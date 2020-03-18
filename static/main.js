@@ -32,7 +32,7 @@ new Vue({
         console.log(response.data)
         this.charts = response.data;
 
-        this.socket = io('http://localhost:3000');
+        this.socket = io('http://localhost:3000/messages');
         this.socket.on('msgToClient', (message) => {
             this.receivedMessage(message)
         })

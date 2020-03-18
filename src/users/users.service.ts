@@ -23,7 +23,7 @@ export class UsersService {
 
   async getUserById(userId: string) {
     const user = this.findUser(userId);
-    return { ...user };
+    return user as User;
   }
 
   private findUser(id: string): User {
@@ -31,6 +31,6 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('Could not find user.');
     }
-    return user;
+    return user as User;
   }
 }

@@ -18,6 +18,6 @@ export class MessagesService {
 
   async getByChartId(chartId: string) {
     const messages = await this.messageModel.find({chartId}).exec();
-    return messages;
+    return messages as Message[];
   }
 }
