@@ -15,11 +15,16 @@ import {
     server: Server;
   
     private logger: Logger = new Logger('AppGateway');
+    private connections:string[] = [];
     
     @SubscribeMessage('msgToServer')
-    handleMessage(client: Socket, payload: string): void {
+    handleMessage(client: Socket, payload: any): void {
       this.server.emit('msgToClient', payload);
-      console.log(payload)
+      
+      if (this.connections.indexOf(payload.chatId) === -1) {
+        this.connections.push(payload.chatId);
+      }
+      console.log(this.connections);
     }
   
     afterInit(server: Server) {

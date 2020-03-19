@@ -5,14 +5,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { MessagesModule } from './messages/messages.module';
-import { ChartsModule } from './charts/charts.module';
+import { ChatsModule } from './chats/chats.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 
 @Module({
   imports: [
     UsersModule,
     MessagesModule,
-    ChartsModule,
+    ChatsModule,
     MongooseModule.forRoot('mongodb://localhost/nestAppDB')
   ],
   controllers: [AppController],
