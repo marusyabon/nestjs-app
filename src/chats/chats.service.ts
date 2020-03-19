@@ -17,7 +17,7 @@ export class ChatsService {
   }
 
   async getById(chatId: string) {
-    const chat = await this.chatModel.aggregate([
+    const result = await this.chatModel.aggregate([
       { $match: { _id: Types.ObjectId(chatId) } },
       { $lookup:  {
           from: 'messages',
@@ -25,10 +25,11 @@ export class ChatsService {
           foreignField: 'chatId',
           as: 'messages'
         }
-      }
+      },
+      { $limit: 1 }
     ]).exec();
 
-    return chat;
+    return result[0];
   }
 
   async insertChat(name: string, userIds: Array<string>) {

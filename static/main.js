@@ -29,9 +29,12 @@ new Vue({
         validateInput() {
             return this.name.length > 0 && this.text.length > 0
         },
-        openChat(chatId) {
+        async openChat(chatId) {
             this.showChat = true;
             this.chatId = chatId;
+            const {data: {messages}} = await axios.get(`http://localhost:3000/chats/${chatId}`);
+            this.messages.push(...messages);
+
             this.socket = io(`http://localhost:3000/chats/${chatId}`);
             this.socket.on('msgToClient', (message) => {
                 this.receivedMessage(message)
