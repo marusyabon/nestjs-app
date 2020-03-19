@@ -17,7 +17,7 @@ export class UsersService {
   }
 
   async getUsers() {
-    const users = await this.userModel.find().exec();
+    const users = await this.userModel.find().lean();
     return users;
   }
 
@@ -27,7 +27,7 @@ export class UsersService {
   }
 
   private findUser(id: string): User {
-    const user = this.userModel.find({_id: id});
+    const user = this.userModel.findById(id).lean();
     if (!user) {
       throw new NotFoundException('Could not find user.');
     }

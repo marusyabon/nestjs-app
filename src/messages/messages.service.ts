@@ -10,14 +10,14 @@ export class MessagesService {
     @InjectModel('Message') private readonly messageModel: Model<Message>
   ) {}
 
-  async insertMessage(chartId: string, userId: string, date: Date, text: string, ) {
-    const newMessage = new this.messageModel({chartId, userId, date, text});
+  async insertMessage(chatId: string, userId: string, date: Date, text: string, ) {
+    const newMessage = new this.messageModel({chatId, userId, date, text});
     const result = await newMessage.save();
     return result._id as string;
   }
 
-  async getByChartId(chartId: string) {
-    const messages = await this.messageModel.find({chartId}).exec();
+  async getByChatId(chatId: string) {
+    const messages = await this.messageModel.find({chatId}).lean();
     return messages as Message[];
   }
 }

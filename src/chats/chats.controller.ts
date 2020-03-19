@@ -2,7 +2,8 @@ import {
   Controller,
   Get,
   Post,
-  Body
+  Body,
+  Param
 } from '@nestjs/common';
 
 import { ChatsService } from './chats.service';
@@ -14,6 +15,11 @@ import { ChatsService } from './chats.service';
   @Get()
   getAllChats() {
     return this.chatsService.getChats();
+  }
+
+  @Get(':id')
+  getChat(@Param('id') chatId: string) {
+    return this.chatsService.getById(chatId);
   }
 
   @Post()

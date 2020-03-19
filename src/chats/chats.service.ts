@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Types } from 'mongoose';
 
 import { Chat } from './chat.model';
 
@@ -11,8 +12,23 @@ export class ChatsService {
     ) {}
 
   async getChats() {
-    const chats = await this.chatModel.find().exec();
+    const chats = await this.chatModel.find({}).lean();
     return chats as Chat[];
+  }
+
+  async getById(chatId: string) {
+    const chat = await this.chatModel.aggregate([
+      { $match: { _id: Types.ObjectId(chatId) } },
+      { $lookup:  {
+          from: 'messages',
+          localField: '_id',
+          foreignField: 'chatId',
+          as: 'messages'
+        }
+      }
+    ]).exec();
+
+    return chat;
   }
 
   async insertChat(name: string, userIds: Array<string>) {

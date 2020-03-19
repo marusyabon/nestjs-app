@@ -6,17 +6,16 @@ new Vue({
         name: '',
         text: '',
         messages: [],
-        charts: [],
+        chats: [],
         socket: null,
-        showChart: false,
-        chartId: null
+        showChat: false,
+        chatId: null
     },
     methods: {
         sendMessage() {
             if(this.validateInput()) {
-                console.log(this.chartId)
                 const message = {
-                    chartId: this.chartId,
+                    chatId: this.chatId,
                     name: this.name,
                     text: this.text
                 }
@@ -30,17 +29,17 @@ new Vue({
         validateInput() {
             return this.name.length > 0 && this.text.length > 0
         },
-        openChart(chartId) {
-            this.showChart = true;
-            this.chartId = chartId;
-            this.socket = io(`http://localhost:3000/messages`);
+        openChat(chatId) {
+            this.showChat = true;
+            this.chatId = chatId;
+            this.socket = io(`http://localhost:3000/chats/${chatId}`);
             this.socket.on('msgToClient', (message) => {
                 this.receivedMessage(message)
             });
         }
     },
     async created() {
-        const response = await axios.get('http://localhost:3000/charts');
-        this.charts = response.data;
+        const response = await axios.get('http://localhost:3000/chats');
+        this.chats = response.data;
     }
 })

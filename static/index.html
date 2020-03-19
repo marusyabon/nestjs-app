@@ -14,10 +14,10 @@
 <body>
     <div id="app" class="container">
             <div class="row">
-                <template v-if="!showChart">
+                <template v-if="!showChat">
                     <div class="col-lg-2 col-md-4 col-sm-12 pt-4">
                         <ul>
-                            <li v-for="item in charts" v-on:click="openChart(item._id)">{{ item.name }}</li>
+                            <li v-for="item in chats" v-on:click="openChat(item._id)">{{ item.name }}</li>
                         </ul>
                     </div>
                 </template>

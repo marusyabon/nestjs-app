@@ -12,19 +12,19 @@ export class MessagesController {
     constructor(private readonly messagesService: MessagesService) {}
 
     @Get()
-    getMessagesByChartId(chartId: string) {
-        return this.messagesService.getByChartId(chartId);
+    getMessagesByChatId(chatId: string) {
+        return this.messagesService.getByChatId(chatId);
     }
 
     @Post()
     async addMessage(
-        @Body('chartId') chartId: string,
+        @Body('chatId') chatId: string,
         @Body('userId') userId: string,
         @Body('date') date: Date,
         @Body('text') text: string
     ) {
         const generatedId = await this.messagesService.insertMessage(
-            chartId,
+            chatId,
             userId,
             date,
             text

@@ -5,7 +5,7 @@ export const ChatSchema = mongoose.Schema({
     userIds: [String]
 });
 
-export interface Chat {
+export interface Chat extends mongoose.Document {
   id: string;
   name: string;
   userIds: Array<string>;

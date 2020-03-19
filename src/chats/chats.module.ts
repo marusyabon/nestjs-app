@@ -7,7 +7,9 @@ import { ChatSchema } from './chat.model';
 import { AppGateway } from './chats.gateway';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'Chat', schema: ChatSchema }])],
+  imports: [MongooseModule.forFeature([
+    { name: 'Chat', schema: ChatSchema }
+  ])],
   controllers: [ChatsController],
   providers: [ChatsService, AppGateway],
 })
