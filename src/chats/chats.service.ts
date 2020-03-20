@@ -26,7 +26,43 @@ export class ChatsService {
           as: 'messages'
         }
       },
-      { $limit: 1 }
+      {
+        $unwind: {
+          path: "$messages",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup:  {
+          from: 'users',
+          localField: "messages.userId",
+          foreignField: "_id",
+          as: "sender"
+        }
+      },
+      {
+        $unwind: {
+          path: "$sender",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $group: {
+          _id : "$_id",
+          userIds: { $first: '$userIds' },
+          name: { $first: '$name' },
+          messages: { 
+            $push: {
+              date: '$messages.date',
+              text: '$messages.text',
+              sender: {
+                id: '$sender._id',
+                name: '$sender.name',
+                email: '$sender.email'
+              }
+          } }
+        },
+      }
     ]).exec();
 
     return result[0];
