@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { Message } from './message.model';
+import { User } from '../users/user.model';
 
 @Injectable()
 export class MessagesService {
@@ -10,8 +11,8 @@ export class MessagesService {
     @InjectModel('Message') private readonly messageModel: Model<Message>
   ) {}
 
-  async insertMessage(chatId: string, userId: string, date: Date, text: string, ) {
-    const newMessage = new this.messageModel({chatId, userId, date, text});
+  async insertMessage(user: User, date: Date, text: string, ) {
+    const newMessage = new this.messageModel({user, date, text});
     const result = await newMessage.save();
     return result._id as string;
   }

@@ -6,6 +6,7 @@ import {
   } from '@nestjs/common';
   
 import { MessagesService } from './messages.service';
+import { User } from '../users/user.model';
 
 @Controller('messages')
 export class MessagesController {
@@ -18,14 +19,12 @@ export class MessagesController {
 
     @Post()
     async addMessage(
-        @Body('chatId') chatId: string,
-        @Body('userId') userId: string,
+        @Body('user') user: User,
         @Body('date') date: Date,
         @Body('text') text: string
     ) {
         const generatedId = await this.messagesService.insertMessage(
-            chatId,
-            userId,
+            user,
             date,
             text
         );

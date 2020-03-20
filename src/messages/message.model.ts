@@ -1,18 +1,18 @@
 import * as mongoose from 'mongoose';
+import { User } from '../users/user.model';
 
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
 export const MessageSchema = mongoose.Schema({
-  chatId: { type: ObjectId, ref: 'Chat' },
-  userId: { type: ObjectId, ref: 'User' },
+  // chatId: { type: ObjectId, ref: 'Chat' },
+  user: { type: ObjectId, ref: 'User' },
   date: { type: Date, required: true },
   text: String
 });
 
 export interface Message extends mongoose.Document {
   id: string;
-  chatId: string;
-  userId: string;
+  user: User;
   date: Date;
   text: string;
 }

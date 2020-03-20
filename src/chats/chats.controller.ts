@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 
 import { ChatsService } from './chats.service';
+import { User } from '../users/user.model';
 
 @Controller('chats')
   export class ChatsController {
@@ -25,11 +26,11 @@ import { ChatsService } from './chats.service';
   @Post()
   async addChat(
     @Body('name') chatName: string,
-    @Body('userIds') userIds: [string]
+    @Body('users') users: [User]
   ) {
     const generatedId = await this.chatsService.insertChat(
       chatName,
-      userIds
+      users
     )
     return { id: generatedId };
   }
