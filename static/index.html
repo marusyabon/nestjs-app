@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
     <title>Nestjs SocketIO</title>
-    <!-- <link rel="stylesheet" href="styles.css"> -->
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script type="text/javascript" src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>
@@ -15,11 +15,25 @@
     <div id="app" class="container">
             <div class="row">
                 <template v-if="!showChat">
-                    <div class="col-lg-2 col-md-4 col-sm-12 pt-4">
+                    <div class="col-lg-8 col-md-10 col-sm-12 pt-4">
                         <ul>
-                            <li v-for="item in chats" v-on:click="openChat(item._id)">{{ item.name }}</li>
+                            <li v-for="item in chats" v-on:click="openChat(item._id)" class = "d-flex justify-content-between">
+                                <span>{{ item.name }}</span>
+                                <span class="close_icon" title="remove" v-on:click="removeChat(item._id, $event)">x</span>                                
+                            </li>
                         </ul>
                     </div>
+
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <input v-model ="chatName" type="text" name="chatName" style="width: 100%;">
+                            </div>
+                            <div class="col">
+                                <button v-on:click="addChat">New chat</button>
+                            </div>
+                        </div>
+                    </div>                    
                 </template>
                 
                 <template v-else>
@@ -27,6 +41,7 @@
                         <h1 class="text-center">{{ title }}</h1>
                         <br>
                         <div id="status"></div>
+                        <p>{{ chatName }}</p>
                         <div id="chat">
                             <input type="text" v-model="name" id="username" class="form-control" placeholder="Enter name...">
                             <br>
@@ -41,6 +56,9 @@
                             <textarea id="textarea" class="form-control" v-model="text" placeholder="Enter message..."></textarea>
                             <br>
                             <button id="send" class="btn" @click.prevent="sendMessage">Send</button>
+                        </div>
+                        <div class="text-right">
+                            <button v-on:click="showList">Back to list</button>
                         </div>
                     </div>
                 </template>

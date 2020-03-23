@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Delete,
   Body,
   Param
 } from '@nestjs/common';
@@ -13,7 +14,7 @@ import { User } from '../users/user.model';
   export class ChatsController {
   constructor(private readonly chatsService: ChatsService) {}
 
-  @Get()
+  @Get() 
   getAllChats() {
     return this.chatsService.getChats();
   }
@@ -32,6 +33,11 @@ import { User } from '../users/user.model';
       chatName,
       users
     )
-    return { id: generatedId };
+    return { id: generatedId, name: chatName };
+  }
+
+  @Delete(':id')
+  removeChat(@Param('id') chatId: string) {
+    return this.chatsService.removeChat(chatId);
   }
 }

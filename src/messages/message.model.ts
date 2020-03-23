@@ -4,7 +4,6 @@ import { User } from '../users/user.model';
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
 export const MessageSchema = mongoose.Schema({
-  // chatId: { type: ObjectId, ref: 'Chat' },
   user: { type: ObjectId, ref: 'User' },
   date: { type: Date, required: true },
   text: String

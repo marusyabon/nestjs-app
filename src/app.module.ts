@@ -4,14 +4,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import { MessagesModule } from './messages/messages.module';
 import { ChatsModule } from './chats/chats.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 
 @Module({
   imports: [
     UsersModule,
-    MessagesModule,
     ChatsModule,
     MongooseModule.forRoot('mongodb://localhost/nestAppDB')
   ],

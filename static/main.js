@@ -9,6 +9,7 @@ new Vue({
         chats: [],
         socket: null,
         showChat: false,
+        chatName: '',
         chatId: null
     },
     methods: {
@@ -32,17 +33,40 @@ new Vue({
         async openChat(chatId) {
             this.showChat = true;
             this.chatId = chatId;
-            const {data: {messages}} = await axios.get(`http://localhost:3000/chats/${chatId}`);
+            const {data: {name, messages}} = await axios.get(`http://localhost:3000/chats/${chatId}`);
+            this.chatName = name;
             this.messages.push(...messages);
 
             this.socket = io(`http://localhost:3000/chats/${chatId}`);
             this.socket.on('msgToClient', (message) => {
                 this.receivedMessage(message)
             });
+        },
+        async addChat() {
+            const response = await axios.post('http://localhost:3000/chats', {name: this.chatName});
+
+            if (response) {
+                this.chatName = response.data.name;
+                this.openChat(response.data.id);
+            }
+            console.log(name);
+        },
+        async showList() {
+            this.chatName = '';
+            await this.getAllChats();
+            this.showChat = false;
+        },
+        async getAllChats() {
+            const response = await axios.get('http://localhost:3000/chats');
+            this.chats = response.data;
+        },
+        async removeChat(chatId, event) {
+            event.stopPropagation();
+            await axios.delete(`http://localhost:3000/chats/${chatId}`);
+            await this.getAllChats();
         }
     },
     async created() {
-        const response = await axios.get('http://localhost:3000/chats');
-        this.chats = response.data;
+        await this.getAllChats();
     }
 })
