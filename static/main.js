@@ -34,10 +34,11 @@ new Vue({
             this.showChat = true;
             this.chatId = chatId;
             const {data: {name, messages}} = await axios.get(`http://localhost:3000/chats/${chatId}`);
+
             this.chatName = name;
             this.messages.push(...messages);
 
-            this.socket = io(`http://localhost:3000/chats/${chatId}`);
+            // this.socket = io(`http://localhost:3000/chats/${chatId}`);
             this.socket.on('msgToClient', (message) => {
                 this.receivedMessage(message)
             });
@@ -49,7 +50,6 @@ new Vue({
                 this.chatName = response.data.name;
                 this.openChat(response.data.id);
             }
-            console.log(name);
         },
         async showList() {
             this.chatName = '';
@@ -67,6 +67,11 @@ new Vue({
         }
     },
     async created() {
+        this.socket = io(`http://localhost:3000/chats`);
+        this.socket.on('chat-created', (generatedId) => {
+            console.log('You have new chat');
+            this.getAllChats()
+        });
         await this.getAllChats();
     }
 })

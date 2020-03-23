@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Schema } from 'mongoose';
+import { Model } from 'mongoose';
 
 import { User } from '../users/user.model';
 import { Chat } from './chat.model';
@@ -21,7 +21,7 @@ export class ChatsService {
       .findById(chatId)
       .populate('users')
       .exec();
-    console.log(result, 'ress');
+    // console.log(result, 'result');
 
     return result;
   }

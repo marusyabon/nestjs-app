@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import {
   SubscribeMessage,
   WebSocketGateway,
@@ -8,8 +9,9 @@ import {
   } from '@nestjs/websockets';
   import { Logger } from '@nestjs/common';
   import { Socket, Server } from 'socket.io';
-  
-  @WebSocketGateway({namespace: 'messages'})
+
+  @Injectable()
+  @WebSocketGateway({namespace: 'chats'})
   export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer() 
     server: Server;
@@ -24,7 +26,7 @@ import {
       if (this.connections.indexOf(payload.chatId) === -1) {
         this.connections.push(payload.chatId);
       }
-      console.log(this.connections);
+      // console.log(this.connections);
     }
   
     afterInit(server: Server) {
