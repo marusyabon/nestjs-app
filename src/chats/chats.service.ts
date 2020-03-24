@@ -1,9 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Schema } from 'mongoose';
 
 import { User } from '../users/user.model';
 import { Chat } from './chat.model';
+import { Message } from '../messages/message.model';
 
 @Injectable()
 export class ChatsService {
@@ -30,6 +31,13 @@ export class ChatsService {
     const newChat = await new this.chatModel({name, users});
     const result = await newChat.save();
     return result._id as string;
+  }
+
+  async saveMessage(chatId: string, message: Message) {
+    await this.chatModel.update(
+      { _id: Schema.Types.ObjectId(chatId) }, 
+      { $push: { messages: message } }
+    )
   }
 
   async removeChat(chatId: string) {

@@ -1,9 +1,7 @@
 import {
   Controller,
   Get,
-  Post,
   Delete,
-  Body,
   Param
 } from '@nestjs/common';
 
@@ -28,22 +26,9 @@ import { AppGateway } from './chats.gateway';
     return this.chatsService.getById(chatId);
   }
 
-  @Post()
-  async addChat(
-    @Body('name') chatName: string,
-    @Body('users') users: [User]
-  ) {
-    const generatedId = await this.chatsService.insertChat(
-      chatName,
-      users
-    );
-
-    this.appGateway.server.emit('chat-created', generatedId);
-    return { id: generatedId, name: chatName };
-  }
-
   @Delete(':id')
   removeChat(@Param('id') chatId: string) {
+    this.appGateway.server.emit('chat-removed', chatId);
     return this.chatsService.removeChat(chatId);
   }
 }

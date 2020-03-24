@@ -8,25 +8,37 @@ import {
   OnGatewayDisconnect,
   } from '@nestjs/websockets';
   import { Logger } from '@nestjs/common';
+  import { ChatsService } from './chats.service';
   import { Socket, Server } from 'socket.io';
 
   @Injectable()
   @WebSocketGateway({namespace: 'chats'})
   export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+    constructor(
+      private readonly chatsService: ChatsService
+    ) {}
     @WebSocketServer() 
     server: Server;
   
     private logger: Logger = new Logger('AppGateway');
-    private connections:string[] = [];
+    private rooms:[] = [];
     
     @SubscribeMessage('msgToServer')
     handleMessage(client: Socket, payload: any): void {
-      this.server.emit('msgToClient', payload);
-      
-      if (this.connections.indexOf(payload.chatId) === -1) {
-        this.connections.push(payload.chatId);
-      }
-      // console.log(this.connections);
+      this.server.emit(`msgToClient_${payload.chatId}`, payload);
+    }
+
+    @SubscribeMessage('createChat')
+    async createNewChat(client: Socket, userData: any): Promise<string> {
+      const { chatName, users } = userData;
+
+      this.server.emit('newChat', chatName);
+
+      const generatedId = await this.chatsService.insertChat(
+        chatName,
+        users
+      );
+      return generatedId;
     }
   
     afterInit(server: Server) {
