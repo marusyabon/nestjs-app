@@ -5,75 +5,92 @@ new Vue({
         title: 'Nestjs Websockets Chat',
         name: '',
         text: '',
-        messages: [],
-        chats: [],
+        chats: {},
         socket: null,
         showChat: false,
         chatName: '',
-        chatId: null
+        chatId: null,
+        chatsArr: [],
+        messages: []
     },
     methods: {
         sendMessage() {
             if(this.validateInput()) {
                 const message = {
                     name: this.name,
-                    text: this.text
+                    text: this.text,
+                    date: new Date()
                 }
-                this.socket.emit('msgToServer', {chatId: this.chatId, message})
+                if (this.chatId) {
+                    this.socket.emit('msgToServer', {chatId: this.chatId, message});
+                }
+                else {
+                    console.log(this.userId);
+                    const chatId = this.socket.emit('msgToServer', {name: this.chatName, user: this.userId, message});
+                    console.log(chatId);
+                }
+                
                 this.text = ''
             }
         },
         receivedMessage(message) {
-            this.messages.push(message)
+            this.chats[this.chatId][messages].push(message);
         },
         validateInput() {
             return this.name.length > 0 && this.text.length > 0
         },
         async openChat(chatId) {
-            this.showChat = true;
-            this.chatId = chatId;
-            const {data: {name, messages}} = await axios.get(`http://localhost:3000/chats/${chatId}`);
-
-            this.chatName = name;
-            this.messages.push(...messages);
-
-            // this.socket = io(`http://localhost:3000/chats/${chatId}`);
-            this.socket.on(`msgToClient_${chatId}`, (message) => {
-                this.receivedMessage(message)
-            });
+            if (chatId) {
+                this.chatId = chatId;
+                const response = await axios.get(`http://localhost:3000/chats/${chatId}`);
+                const {data: {name, messages}} = response;
+                this.chatName = name;
+                this.chats[chatId].messages = [];
+                this.chats[chatId].messages.push(...messages);
+                console.log(this.chats[chatId]);
+                this.messages = [...messages];
+            }
         },
         async addChat() {
-            const chatData = {chatName: this.chatName, users: ['5e70d00493ed583528fb7ee5', '5e71046397a8d930b85d0d94']};
-            this.socket.emit('createChat', chatData)
-
-            this.openChat(response.data.id);
+            this.openChat();
         },
         async showList() {
             this.chatName = '';
-            this.showChat = false;
+            this.chatId = '';
         },
         async getAllChats() {
             const response = await axios.get('http://localhost:3000/chats');
-            this.chats = response.data;
-            console.log(this.chats);
+            this.chatsArr = response.data;
+            response.data.forEach((el) => {
+                this.chats[el._id] = {name: el.name};
+            });
         },
         async removeChat(chatId, event) {
             event.stopPropagation();
             await axios.delete(`http://localhost:3000/chats/${chatId}`);
-            await this.getAllChats();
+            delete this.chats.chatId;
         }
     },
     async created() {
         this.socket = io(`http://localhost:3000/chats`);
-        this.socket.on('newChat', (chat) => {
-            console.log('You have new chat');
-            
-            this.chats.push(chat)
+        const chatId = this.chatId;
+        this.socket.on(`msgToClient_${chatId}`, ({name, users, message}) => {
+            const chats  = this.chats;
+            // if chat is new
+            if (!chats.chatId) {
+                chats.chatId = {name, messages: [message]};
+            }
+            else {
+                this.receivedMessage(message);
+            }
         });
+        // this.socket.on('newChat', (chat) => {
+        //     console.log('You have new chat');
+            
+        //     this.chats.push(chat)
+        // });
         this.socket.on('chat-removed', (chatId) => {
-            console.log(chatId);
-            const chatIndex = this.chats.findIndex(el => el._id === chatId);
-            this.chats.splice(chatIndex, 1);
+            delete this.chats.chatId;
         });
         await this.getAllChats();
     }

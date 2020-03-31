@@ -9,11 +9,15 @@ import { Message } from '../messages/message.model';
 @Injectable()
 export class ChatsService {
   constructor(
-      @InjectModel('Chat') private readonly chatModel: Model<Chat>
+      @InjectModel('Chat') private readonly chatModel: Model<Chat>,
+      @InjectModel('Message') private readonly messageModel: Model<Message>
     ) {}
 
   async getChats() {
-    const chats = await this.chatModel.find({}).lean();
+    const chats = await this.chatModel
+    .find({})
+    .select({_id: 1, name: 1})
+    .lean();
     return chats as Chat[];
   }
 
@@ -23,7 +27,7 @@ export class ChatsService {
       .populate('users')
       .exec();
     // console.log(result, 'result');
-
+console.log(result);
     return result;
   }
 
@@ -34,10 +38,16 @@ export class ChatsService {
   }
 
   async saveMessage(chatId: string, message: Message) {
-    await this.chatModel.update(
-      { _id: Schema.Types.ObjectId(chatId) }, 
-      { $push: { messages: message } }
-    )
+    const messageEntity = await new this.messageModel({...message});
+
+    const response = await this.chatModel.update(
+      { _id: chatId }, 
+      { $push: { messages: messageEntity } }
+    );
+  
+    console.log(response);
+
+    return response;
   }
 
   async removeChat(chatId: string) {

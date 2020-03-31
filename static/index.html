@@ -14,10 +14,10 @@
 <body>
     <div id="app" class="container">
             <div class="row">
-                <template v-if="!showChat">
+                <template v-if="!chatId">
                     <div class="col-lg-8 col-md-10 col-sm-12 pt-4">
                         <ul>
-                            <li v-for="item in chats" v-on:click="openChat(item._id)" class = "d-flex justify-content-between">
+                            <li v-for="item in chatsArr" v-on:click="openChat(item._id)" class = "d-flex justify-content-between">
                                 <span>{{ item.name }}</span>
                                 <span class="close_icon" title="remove" v-on:click="removeChat(item._id, $event)">x</span>                                
                             </li>

@@ -24,8 +24,14 @@ import {
     private rooms:[] = [];
     
     @SubscribeMessage('msgToServer')
-    handleMessage(client: Socket, payload: any): void {
-      this.server.emit(`msgToClient_${payload.chatId}`, payload);
+    async handleMessage(client: Socket, userData: any): Promise<void> {
+      const {chatId, message} = userData;
+      this.server.emit(`msgToClient_${chatId}`, message);
+
+      await this.chatsService.saveMessage(
+        chatId,
+        message
+      );
     }
 
     @SubscribeMessage('createChat')
